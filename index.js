@@ -11,8 +11,7 @@ app.get('/', (req, res) => {
 app.get('/status', (req, res) => {
   res.json({ 
     status: 'ok', 
-    timestamp: new Date() 
-  });
+    timestamp: new Date() });
 });
 
 // inicia o servidor localmente — na Vercel essa parte é pulada
