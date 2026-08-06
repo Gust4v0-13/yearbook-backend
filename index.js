@@ -1,5 +1,6 @@
 import 'dotenv/config';  
 import express from "express"; // importa o Express
+import cors from 'cors';  
 import tratarErro from './middlewares/erro.js';
 import logger from "./middlewares/logger.js"; // importa o middleware de log
 import alunosRouter from "./routes/alunos.js"; // importa o router de alunos
@@ -8,6 +9,7 @@ import mensagensRouter from "./routes/mensagens.js"; // importa o router de mens
 const app = express(); // cria a aplicação Express
 const PORT = process.env.PORT || 3000;
 
+app.use(cors()); 
 app.use(express.json()); // 1º — parseia JSON do body
 app.use(logger); // 2º — registra log de cada requisição
 

@@ -2,6 +2,12 @@
 
 Base URL: `http://localhost:3000` (desenvolvimento)
 
+## CORS
+
+Esta API tem CORS habilitado para qualquer origem. Você pode consumi-la
+de qualquer domínio (localhost, Vercel, etc.) sem configuração adicional
+no cliente.
+
 ## Autenticação
 
 | Método | Rota             | Descrição           | Autenticação |
