@@ -1,31 +1,32 @@
-import express from 'express';
-import logger from './middlewares/logger.js';      // importa o middleware de log
-import alunosRouter from './routes/alunos.js';
-import mensagensRouter from './routes/mensagens.js'; // novo import
+import express from "express"; // importa o Express
+import logger from "./middlewares/logger.js"; // importa o middleware de log
+import alunosRouter from "./routes/alunos.js"; // importa o router de alunos
+import mensagensRouter from "./routes/mensagens.js"; // importa o router de mensagens
 
-const app = express();      // cria a aplicação Express
-const PORT = 3000;          // porta do servidor
+const app = express(); // cria a aplicação Express
+const PORT = 3000; // porta do servidor
 
-app.use(express.json());    // 1º — parseia JSON do body
-app.use(logger);            // 2º — registra log de cada requisição
-
+app.use(express.json()); // 1º — parseia JSON do body
+app.use(logger); // 2º — registra log de cada requisição
 
 // rota raiz — boas-vindas
-app.get('/', (req, res) => {
-  res.json({ mensagem: 'Yearbook API está no ar! 🎓' });
+app.get("/", (req, res) => {
+  res.json({ mensagem: "Yearbook API está no ar! 🎓" });
 });
 
 // rota de health check
-app.get('/status', (req, res) => {
-  res.json({ status: 'ok', timestamp: new Date() });
+app.get("/status", (req, res) => {
+  res.json({ status: "ok", timestamp: new Date() });
 });
 
-// registra as rotas de alunos com prefixo /alunos  <- NOVO
-app.use('/alunos', alunosRouter);
-app.use('/mensagens', mensagensRouter); // registra rotas de mensagens
+// registra as rotas de alunos com prefixo /alunos
+app.use("/alunos", alunosRouter);
+
+// registra as rotas de mensagens com prefixo /mensagens
+app.use("/mensagens", mensagensRouter);
 
 // inicia o servidor localmente — na Vercel essa parte é pulada
-if (process.env.VERCEL !== '1') {
+if (process.env.VERCEL !== "1") {
   app.listen(PORT, () => {
     console.log(`Servidor rodando em http://localhost:${PORT}`);
   });

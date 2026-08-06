@@ -1,14 +1,15 @@
-import prisma from '../prisma/client.js'; // importa o singleton do Prisma
+import prisma from "../prisma/client.js"; // importa o singleton do Prisma
 
 // GET /mensagens — lista todas as mensagens (mais recentes primeiro, com dados do autor)
 export async function listarMensagens(req, res) {
   const mensagens = await prisma.mensagem.findMany({
-    orderBy: { criadoEm: 'desc' },  // mais recente primeiro
+    orderBy: { criadoEm: "desc" }, // mais recente primeiro
     include: {
-      autor: {                        // traz dados do autor junto
+      autor: {
+        // traz dados do autor junto
         select: {
-          nome: true,                 // nome do autor
-          fotoUrl: true,              // foto do autor
+          nome: true, // nome do autor
+          fotoUrl: true, // foto do autor
         },
       },
     },
@@ -21,46 +22,33 @@ export async function listarMensagens(req, res) {
 // 🎯 POST /mensagens — cria uma nova mensagem
 // Siga o mesmo padrão do criarAluno
 // Valide que texto não está vazio (400 se faltar)
-// 🎯 POST /mensagens — cria uma nova mensagem
-// Siga o mesmo padrão do criarAluno
-// Valide que texto não está vazio (400 se faltar)
 export async function criarMensagem(req, res) {
-  try {
-    const { texto, imagemUrl, autorId } = req.body;
+  const { texto, imagemUrl, autorId } = req.body;
 
-    if (!texto) {
-      return res.status(400).json({ erro: "Texto é obrigatório" });
-    }
-
-    const mensagemCriada = await prisma.mensagem.create({
-      data: {
-        texto,
-        imagemUrl,
-        autorId,
-      },
-    });
-
-    return res.status(201).json(mensagemCriada);
-  } catch (error) {
-    console.error(error);
-    return res.status(500).json({ erro: "Erro ao criar mensagem" });
+  if (!texto) {
+    return res.status(400).json({ erro: "O campo texto é obrigatório" });
   }
+
+  const novaMensagem = await prisma.mensagem.create({
+    data: {
+      texto,
+      imagemUrl,
+      autorId: Number(autorId),
+    },
+  });
+  res.status(201).json(novaMensagem);
 }
 
 // 🎯 DELETE /mensagens/:id — deleta uma mensagem
 // Siga o mesmo padrão do deletarAluno
-// 🎯 DELETE /mensagens/:id — deleta uma mensagem
-// Siga o mesmo padrão do deletarAluno
 export async function deletarMensagem(req, res) {
   const { id } = req.params;
-
   try {
     await prisma.mensagem.delete({
       where: { id: Number(id) },
     });
-
-    return res.status(204).end();
-  } catch (error) {
-    return res.status(404).json({ erro: "Mensagem não encontrada" });
+    res.status(204).end();
+  } catch (erro) {
+    res.status(404).json({ erro: "Mensagem não encontrada" });
   }
 }
