@@ -1,42 +1,49 @@
-import 'dotenv/config';  
-import express from "express"; // importa o Express
-import cors from 'cors';  
-import tratarErro from './middlewares/erro.js';
-import logger from "./middlewares/logger.js"; // importa o middleware de log
-import alunosRouter from "./routes/alunos.js"; // importa o router de alunos
-import mensagensRouter from "./routes/mensagens.js"; // importa o router de mensagens
+// 1. dotenv (PRIMEIRA LINHA)
+import 'dotenv/config';
 
-const app = express(); // cria a aplicação Express
+// 2. Imports de framework e libs
+import express from 'express';
+import cors from 'cors';
+
+// 3. Imports de middlewares
+import logger from './middlewares/logger.js';
+import tratarErro from './middlewares/erro.js';
+
+// 4. Imports de rotas
+import alunosRouter from './routes/alunos.js';
+import mensagensRouter from './routes/mensagens.js';
+
+// 5. App e configuração
+const app = express();
 const PORT = process.env.PORT || 3000;
 
-app.use(cors()); 
-app.use(express.json()); // 1º — parseia JSON do body
-app.use(logger); // 2º — registra log de cada requisição
+// 6. Middlewares globais — antes das rotas, na ordem correta
+app.use(cors());            // 1º — libera CORS
+app.use(express.json());    // 2º — parseia body JSON
+app.use(logger);            // 3º — registra log
 
-// rota raiz — boas-vindas
-app.get("/", (req, res) => {
-  res.json({ mensagem: "Yearbook API está no ar! 🎓" });
+// 7. Rotas raiz
+app.get('/', (req, res) => {
+  res.json({ mensagem: 'Yearbook API está no ar! 🎓' });
 });
 
-// rota de health check
-app.get("/status", (req, res) => {
-  res.json({ status: "ok", timestamp: new Date() });
+app.get('/status', (req, res) => {
+  res.json({ status: 'ok', timestamp: new Date() });
 });
 
-// registra as rotas de alunos com prefixo /alunos
-app.use("/alunos", alunosRouter);
+// 8. Routers de recursos
+app.use('/alunos', alunosRouter);
+app.use('/mensagens', mensagensRouter);
 
-// registra as rotas de mensagens com prefixo /mensagens
-app.use("/mensagens", mensagensRouter);
-
+// 9. Middleware de erro — POR ÚLTIMO, depois de todas as rotas
 app.use(tratarErro);
 
-// inicia o servidor localmente — na Vercel essa parte é pulada
-if (process.env.VERCEL !== "1") {
+// 10. Iniciar servidor localmente (Vercel ignora)
+if (process.env.VERCEL !== '1') {
   app.listen(PORT, () => {
     console.log(`Servidor rodando em http://localhost:${PORT}`);
   });
 }
 
-// exporta o app para a Vercel usar como serverless function
+// 11. Exportar app para a Vercel usar como serverless function
 export default app;
